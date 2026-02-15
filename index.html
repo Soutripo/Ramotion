@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramotion | Photography</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --line-color: #1a1a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- ローディング画面（完全復元） --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); color: #fff; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            transition: opacity 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        #loader.loaded { opacity: 0; pointer-events: none; }
+        
+        .loader-logo {
+            font-size: 4.5em; font-weight: 700; letter-spacing: 0.4em; 
+            margin-bottom: 20px; color: var(--text-primary); text-indent: 0.4em; 
+            animation: logoFadeIn 0.5s ease-out forwards;
+        }
+        @keyframes logoFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .load-pct-wrapper {
+            width: 100%; padding: 0 5%; display: flex; justify-content: flex-start; margin-bottom: 15px;
+        }
+        .load-pct { font-size: 4rem; font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
+        .load-unit { font-size: 1.2rem; margin-left: 5px; }
+        
+        .load-bar-bg { width: 100vw; height: 1px; background: #1a1a1a; position: relative; overflow: hidden; }
+        .load-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: #fff; width: 0%; }
+
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- ヘッダー（中央揃えを絶対死守） --- */
+        .site-header { width: 100%; padding: 80px 0 60px; text-align: center; }
+        .site-title { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--text-primary); margin-bottom: 50px; display: block; text-decoration: none; }
+        .header-statement { margin-bottom: 60px; padding: 0 5%; }
+        .statement-line { display: block; font-size: 1.05rem; letter-spacing: 0.35em; line-height: 2.8; color: var(--text-primary); }
+
+        .category-nav { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 60px; border-bottom: 1px solid var(--line-color); }
+        .nav-item { text-decoration: none; color: var(--text-secondary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; padding: 20px 30px; cursor: pointer; background: none; border: none; position: relative; transition: color 0.3s; white-space: nowrap; }
+        .nav-item.active { color: #fff; }
+        .nav-item.active::after { content: ''; position: absolute; bottom: -1px; left: 20px; right: 20px; height: 2px; background-color: #fff; }
+
+        /* --- コンテンツエリア --- */
+        .tab-content { width: 90%; max-width: 1400px; margin: 0 auto; display: none; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-left: 2px solid #fff; padding: 5px 0 5px 30px; }
+        .section-title { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.25em; }
+        
+        .preview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; margin-bottom: 80px; }
+        .preview-item { text-decoration: none; color: inherit; display: block; }
+        .img-box { width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background-color: #111; margin-bottom: 25px; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(0.2, 0.6, 0.2, 1); }
+        .preview-item:hover img { transform: scale(1.03); }
+        .item-info h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.15em; }
+        .item-info p { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--text-secondary); }
+
+        .coming-soon { text-align: center; padding: 120px 0; color: var(--text-secondary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; letter-spacing: 0.4em; }
+
+        /* --- フッター --- */
+        .sub-footer-links { width: 100%; padding: 100px 5% 80px; margin-top: 120px; border-top: 1px solid var(--line-color); background-color: #050505; }
+        .sub-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .sub-section h3 { font-family: 'Montserrat'; font-size: 0.75rem; letter-spacing: 0.25em; color: var(--text-secondary); margin-bottom: 30px; text-transform: uppercase; }
+        .sub-link { display: block; text-decoration: none; color: #ccc; font-size: 0.9rem; margin-bottom: 15px; transition: color 0.3s; }
+        .sub-link:hover { color: #fff; }
+
+        .final-copyright-bar { width: 100%; padding: 40px 0; background-color: #000; text-align: center; }
+        .copyright-text { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #888; letter-spacing: 0.15em; }
+
+        /* --- スマホ専用調整（PCには1ミリも影響させない） --- */
+        @media (max-width: 768px) {
+            .loader-logo { font-size: 2.2em; letter-spacing: 0.2em; }
+            .load-pct { font-size: 3rem; }
+            
+            .site-header { padding: 60px 0 40px; }
+            .site-title { font-size: 1.8rem; letter-spacing: 0.2em; }
+            .header-statement { margin-bottom: 50px; }
+            .statement-line { font-size: 0.9rem; letter-spacing: 0.15em; line-height: 2.2; }
+            
+            .category-nav { 
+                gap: 0; 
+                overflow-x: auto; 
+                -webkit-overflow-scrolling: touch; 
+                justify-content: flex-start; 
+                padding: 0;
+                margin-bottom: 40px;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .category-nav::-webkit-scrollbar { display: none; }
+            .nav-item { 
+                font-size: 0.75rem; 
+                padding: 15px 25px; 
+                letter-spacing: 0.15em;
+                flex-shrink: 0;
+            }
+            .nav-item.active::after { left: 15px; right: 15px; }
+            
+            .tab-content { width: 100%; padding: 0 5%; }
+            .section-header { padding: 5px 0 5px 20px; margin-bottom: 30px; }
+            .section-title { font-size: 1.2rem; }
+            
+            .preview-grid { grid-template-columns: 1fr; gap: 40px; }
+            .img-box { margin-bottom: 20px; }
+            .item-info h3 { font-size: 1rem; }
+            
+            .sub-footer-links { padding: 80px 5% 60px; margin-top: 80px; }
+            .sub-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-logo">RAMOTION</div>
+        <div class="load-pct-wrapper">
+            <div class="load-pct-container">
+                <span class="load-pct" id="load-pct">0</span>
+                <span class="load-unit">%</span>
+            </div>
+        </div>
+        <div class="load-bar-bg"><div class="load-bar-fill" id="load-bar-fill"></div></div>
+    </div>
+
+    <header class="site-header">
+        <a href="index.html" class="site-title">RAMOTION</a>
+        <div class="header-statement">
+            <span class="statement-line">鉄路には、人がいる。</span>
+            <span class="statement-line">鉄路には、想いがある。</span>
+            <span class="statement-line">鉄路には、日常がある。</span>
+            <br>
+            <span class="statement-line">そんな景色を忘れたくないから、今日も写真を撮る。</span>
+            <span class="statement-line">人の営みと触れ合った瞬間に見せる、一瞬の表情を求めて。</span>
+        </div>
+
+        <nav class="category-nav">
+            <button class="nav-item active" onclick="openTab(event, 'tab-gallery')">GALLERY</button>
+            <button class="nav-item" onclick="openTab(event, 'tab-exhibition')">EXHIBITION</button>
+            <button class="nav-item" onclick="openTab(event, 'tab-oneshot')">ONE SHOT</button>
+        </nav>
+    </header>
+
+    <main>
+        <div id="tab-gallery" class="tab-content" style="display: block;">
+            <div class="section-header"><h2 class="section-title">GALLERY</h2></div>
+            <p class="coming-soon">COMING SOON</p>
+        </div>
+
+        <div id="tab-exhibition" class="tab-content">
+            <div class="section-header"><h2 class="section-title">EXHIBITION</h2></div>
+            <p class="coming-soon">COMING SOON</p>
+        </div>
+
+        <div id="tab-oneshot" class="tab-content">
+            <div class="section-header"><h2 class="section-title">ONE SHOT</h2></div>
+            <div class="preview-grid">
+                <a href="post_01.html" class="preview-item">
+                    <div class="img-box"><img src="MookaDE10.jpg" alt="SLもおか"></div>
+                    <div class="item-info">
+                        <h3>SLもおか 茂木入換</h3>
+                        <p>2025.11.02 / MOOKA RAILWAY</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="sub-footer-links">
+        <div class="sub-grid">
+            <div class="sub-section">
+                <h3>About / SNS</h3>
+                <a href="greeting.html" class="sub-link">GREETING</a>
+                <a href="https://www.instagram.com/sou_tripo/" target="_blank" class="sub-link">INSTAGRAM</a>
+                <a href="https://x.com/Sou_tripo" target="_blank" class="sub-link">X (TWITTER)</a>
+            </div>
+            <div class="sub-section"><h3>Update history</h3><a href="history.html" class="sub-link">UPDATE HISTORY</a></div>
+            <div class="sub-section"><h3>Link</h3><a href="link.html" class="sub-link">LINK</a></div>
+            <div class="sub-section">
+                <h3>Unlisted</h3>
+                <a href="unlisted.html" class="sub-link">UNLISTED</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="final-copyright-bar">
+        <p class="copyright-text">Copyright (C) 2025-2026 RAMOTION All Rights Reserved.</p>
+    </div>
+
+    <script>
+        const pctEl = document.getElementById('load-pct');
+        const barEl = document.getElementById('load-bar-fill');
+        const loader = document.getElementById('loader');
+        let count = 0;
+        const timer = setInterval(() => {
+            count++;
+            pctEl.textContent = count;
+            barEl.style.width = count + '%';
+            if (count >= 100) {
+                clearInterval(timer);
+                setTimeout(() => { loader.classList.add('loaded'); }, 100);
+            }
+        }, 8);
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, navitems;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+            navitems = document.getElementsByClassName("nav-item");
+            for (i = 0; i < navitems.length; i++) { navitems[i].classList.remove("active"); }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
