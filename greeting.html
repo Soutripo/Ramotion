@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greeting | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --line-color: #1a1a1a;
+            --accent-glow: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- ローディング & シャッターギミック --- */
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        /* RAMOTION ロゴ（ローディング中） */
+        .loader-logo {
+            font-family: 'Montserrat'; font-size: 2.5rem; font-weight: 700;
+            letter-spacing: 0.4em; color: #fff; margin-bottom: 30px;
+            opacity: 0; animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .load-pct { 
+            font-family: 'Montserrat'; font-size: 2rem; font-weight: 700; 
+            letter-spacing: 0.1em; color: #fff; margin-bottom: 10px; 
+        }
+        .load-pct::after { content: '%'; font-size: 0.8rem; margin-left: 4px; }
+        
+        .load-bar-bg { width: 240px; height: 1px; background: #222; position: relative; }
+        .load-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: #fff; width: 0%; transition: width 0.1s; }
+
+        /* シャッター（限定公開と同じギミック） */
+        .shutter {
+            position: fixed; left: 0; width: 100%; height: 50%;
+            background: var(--bg-dark); z-index: 10001;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            pointer-events: none; visibility: hidden;
+        }
+        #shutter-top { top: 0; border-bottom: 1px solid var(--accent-glow); }
+        #shutter-bottom { bottom: 0; border-top: 1px solid var(--accent-glow); }
+
+        /* --- メインコンテンツ --- */
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        #content {
+            opacity: 0; transform: scale(1.05);
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.6, 0.2, 1);
+            display: flex; flex-direction: column; flex: 1;
+        }
+        #content.reveal { opacity: 1; transform: scale(1); }
+
+        .site-header { width: 100%; padding: 60px 0 40px; text-align: center; }
+        .site-title {
+            font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 700;
+            letter-spacing: 0.35em; text-transform: uppercase; color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        main { 
+            flex: 1; width: 90%; max-width: 800px; margin: 80px auto 40px; 
+            line-height: 2.4; letter-spacing: 0.08em; 
+        }
+        .greeting-title {
+            font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700;
+            letter-spacing: 0.3em; text-align: center; margin-bottom: 40px;
+            border-bottom: 1px solid var(--line-color); padding-bottom: 30px;
+        }
+
+        .profile-header { margin-bottom: 60px; border-bottom: 1px solid var(--line-color); padding-bottom: 20px; }
+        .profile-name { font-size: 1.8rem; letter-spacing: 0.2em; color: var(--text-primary); }
+
+        .greeting-content p { margin-bottom: 45px; text-align: justify; }
+
+        /* 下部ナビゲーションエリア */
+        .footer-nav-area { margin-top: auto; width: 100%; }
+        .sub-footer-links {
+            width: 100%; padding: 80px 5% 60px;
+            border-top: 1px solid var(--line-color); background-color: #050505;
+        }
+        .sub-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .sub-section h3 { font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 0.2em; color: var(--text-secondary); margin-bottom: 25px; text-transform: uppercase; }
+        .sub-link { display: block; text-decoration: none; color: #fff; font-size: 0.95rem; margin-bottom: 12px; letter-spacing: 0.1em; transition: opacity 0.3s; }
+        .sub-link:hover { opacity: 0.6; }
+
+        .final-copyright-bar { width: 100%; padding: 40px 0; background-color: #000; text-align: center; }
+        .copyright-text { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; color: var(--text-secondary); letter-spacing: 0.15em; }
+
+        @media (max-width: 900px) { .sub-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; } }
+        @media (max-width: 600px) { .sub-grid { grid-template-columns: 1fr; text-align: center; } }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="loader-logo">RAMOTION</div>
+        <div class="load-pct" id="load-pct">0</div>
+        <div class="load-bar-bg"><div class="load-bar-fill" id="load-bar-fill"></div></div>
+    </div>
+
+    <div id="shutter-top" class="shutter"></div>
+    <div id="shutter-bottom" class="shutter"></div>
+
+    <div id="content">
+        <header class="site-header">
+            <a href="index2.html" class="site-title">RAMOTION</a>
+        </header>
+
+        <main>
+            <h2 class="greeting-title">GREETING</h2>
+            <div class="profile-header">
+                <h1 class="profile-name">想 / Sou</h1>
+            </div>
+
+            <div class="greeting-content">
+                <p>東京都生まれ。</p>
+                <p>
+                    鉄道趣味の原点は、実家のすぐ真横を走り抜けていた東急線の線路にある。<br>
+                    幼少期、窓のすぐ外をけたたましく通り過ぎる電車の音や、空気を震わせる振動は、自分にとって最も身近な日常の鼓動だった。<br>
+                    当時、周囲にアニメの「きかんしゃトーマス」を見せられても、「こんなの本物じゃない」と断じた記憶がある。幼いながらに、眼前に広がる嘘偽りのない「鉄の塊としてのリアリティ」に惹かれていたのだろう。
+                </p>
+                <p>
+                    中学生になりカメラを手にしてからは、とにかく「編成写真」ばかり撮影していた。いかに美しく、過不足なく車両の造形を収めるか。その一点に心血を注ぎ、全国の鉄路を巡ってシャッターを切り続けた。
+                </p>
+                <p>
+                    しかし、多くの地を歩き、様々な景色に出会う中で、視点は少しずつ変化していった。<br>
+                    記録としての写真の先に、その車両が「その場所に溶け込んでいる瞬間」の美しさを見出したのだ。
+                </p>
+                <p>
+                    今、目指しているのは、特別な一日の一枚ではなく、誰かにとっての「日常」を感じさせる写真である。<br>
+                    街の空気感や、沿線に流れる季節の匂い。そんな風景の中に鉄道が静かに、それでいて確かな存在感を持って佇んでいる。そんな「日常らしさ」を写し止めたいと考えている。
+                </p>
+                <p>
+                    サイト名の「Ramotion」は、Rail（鉄路）と Emotion（感情）を掛け合わせた造語だ。<br>
+                    鉄路が織りなす情景の中に、目には見えない人々の想いや、その場所特有の温度感を可視化する。それが、編成写真から始まった現在の自分の、表現の核となっている。
+                </p>
+                <p>
+                    現在は地方私鉄や路面電車を中心に、スナップや風景写真をメインとした撮影を続けている。
+                </p>
+            </div>
+        </main>
+
+        <div class="footer-nav-area">
+            <footer class="sub-footer-links">
+                <div class="sub-grid">
+                    <div class="sub-section">
+                        <h3>About / SNS</h3>
+                        <a href="greeting.html" class="sub-link">GREETING</a>
+                        <a href="https://www.instagram.com/sou_tripo/" target="_blank" rel="noopener noreferrer" class="sub-link">INSTAGRAM</a>
+                        <a href="https://x.com/Sou_tripo" target="_blank" rel="noopener noreferrer" class="sub-link">X (TWITTER)</a>
+                    </div>
+                    <div class="sub-section"><h3>Update history</h3><a href="history.html" class="sub-link">UPDATE HISTORY</a></div>
+                    <div class="sub-section"><h3>Link</h3><a href="#" class="sub-link">LINK</a></div>
+                    <div class="sub-section"><h3>Private</h3><a href="unlisted.html" class="sub-link">PRIVATE GALLERY</a></div>
+                </div>
+            </footer>
+            <div class="final-copyright-bar"><p class="copyright-text">Copyright (C) 2025-2026 All Rights Reserved.</p></div>
+        </div>
+    </div>
+
+    <script>
+        let pct = 0;
+        const pctEl = document.getElementById('load-pct');
+        const barEl = document.getElementById('load-bar-fill');
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const sTop = document.getElementById('shutter-top');
+        const sBottom = document.getElementById('shutter-bottom');
+        const content = document.getElementById('content');
+
+        const interval = setInterval(() => {
+            pct += Math.floor(Math.random() * 8) + 1; // 読み込み速度を少し調整
+            if (pct >= 100) {
+                pct = 100;
+                clearInterval(interval);
+                runShutterGimmick();
+            }
+            pctEl.textContent = pct;
+            barEl.style.width = pct + '%';
+        }, 60);
+
+        function runShutterGimmick() {
+            // 1. シャッターを見える状態にして準備
+            sTop.style.visibility = 'visible';
+            sBottom.style.visibility = 'visible';
+            
+            // 2. ローディング画面を瞬時に消し、コンテンツを表示準備
+            loaderOverlay.style.display = 'none';
+            content.style.display = 'flex';
+
+            // 3. シャッターが開く
+            setTimeout(() => {
+                sTop.style.transform = 'translateY(-100%)';
+                sBottom.style.transform = 'translateY(100%)';
+                content.classList.add('reveal');
+            }, 50);
+        }
+    </script>
+</body>
+</html>

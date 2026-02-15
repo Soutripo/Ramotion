@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Unlisted | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --line-color: #1a1a1a;
+            --accent-glow: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- 認証オーバーレイ & ギミック --- */
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+
+        /* 解除時のスリットアニメーション用パーツ */
+        .shutter {
+            position: fixed; left: 0; width: 100%; height: 50%;
+            background: var(--bg-dark); z-index: 10001;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            pointer-events: none;
+            display: none; /* 初期は非表示 */
+        }
+        #shutter-top { top: 0; border-bottom: 1px solid var(--accent-glow); }
+        #shutter-bottom { bottom: 0; border-top: 1px solid var(--accent-glow); }
+
+        .auth-box { text-align: center; width: 85%; max-width: 320px; transition: opacity 0.5s ease; }
+        .auth-title { font-family: 'Montserrat'; letter-spacing: 0.5em; font-size: 0.7rem; color: #555; margin-bottom: 40px; }
+        
+        input {
+            background: transparent; border: none; border-bottom: 1px solid #333;
+            color: #fff; font-size: 1.2rem; text-align: center; padding: 12px;
+            outline: none; transition: border-color 0.8s; width: 100%;
+            border-radius: 0; -webkit-appearance: none;
+        }
+        input:focus { border-color: #666; }
+        
+        .submit-btn {
+            margin-top: 40px; background: transparent; border: 1px solid #333;
+            color: #888; padding: 12px 40px; font-family: 'Montserrat';
+            font-size: 0.7rem; letter-spacing: 0.3em; cursor: pointer; transition: 0.5s;
+        }
+        .submit-btn:hover { border-color: #fff; color: #fff; letter-spacing: 0.4em; }
+
+        .contact-info { margin-top: 60px; font-size: 0.65rem; color: #444; letter-spacing: 0.05em; line-height: 2; }
+        .contact-info a { color: #666; text-decoration: none; border-bottom: 1px solid #222; }
+
+        /* --- メインコンテンツ（解除後） --- */
+        #content { 
+            opacity: 0;
+            display: none; flex: 1; flex-direction: column; 
+            width: 90%; max-width: 1200px; margin: 0 auto; padding-top: 80px;
+            transform: scale(1.05);
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.6, 0.2, 1);
+        }
+        #content.reveal { opacity: 1; transform: scale(1); display: flex; }
+
+        .unlisted-header { text-align: center; margin-bottom: 60px; }
+        .unlisted-title { font-family: 'Montserrat'; font-size: 1.4rem; letter-spacing: 0.4em; border-bottom: 1px solid var(--line-color); padding-bottom: 20px; display: inline-block; }
+        
+        .gallery-area { flex: 1; padding-bottom: 60px; }
+
+        .bottom-nav { width: 100%; padding: 100px 0 60px; text-align: center; margin-top: auto; }
+        .back-link { 
+            display: inline-block; font-family: 'Montserrat'; font-size: 0.75rem; 
+            color: #fff; text-decoration: none; letter-spacing: 0.2em; 
+            border-bottom: 1px solid #333; padding-bottom: 5px; transition: 0.3s; 
+        }
+        .back-link:hover { border-color: #fff; }
+
+        .final-copyright-bar { width: 100%; padding: 40px 0; background-color: #000; text-align: center; }
+        .copyright-text { font-family: 'Montserrat'; font-size: 0.7rem; color: #888; letter-spacing: 0.15em; }
+    </style>
+</head>
+<body>
+
+    <div id="shutter-top" class="shutter"></div>
+    <div id="shutter-bottom" class="shutter"></div>
+
+    <div id="auth-overlay">
+        <div class="auth-box" id="auth-box">
+            <div class="auth-title">ENTER PASSCODE</div>
+            <input type="password" id="passInput" placeholder="PASSWORD" autocomplete="off">
+            <button class="submit-btn" onclick="checkAuth()">ENTER</button>
+            <div class="contact-info">
+                パスワードをご希望の方は<br>
+                <a href="https://x.com/Sou_tripo" target="_blank">X (Twitter)</a> または 
+                <a href="https://www.instagram.com/sou_tripo/" target="_blank">Instagram</a> のDMまで
+            </div>
+        </div>
+    </div>
+
+    <div id="content">
+        <header class="unlisted-header">
+            <h1 class="unlisted-title">UNLISTED</h1>
+        </header>
+
+        <main class="gallery-area">
+            <p style="text-align: center; color: #888; font-size: 0.9rem; letter-spacing: 0.1em;">
+                Selected records and unlisted moments.
+            </p>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="index2.html" class="back-link">BACK TO HOME</a>
+        </nav>
+
+        <footer class="final-copyright-bar">
+            <p class="copyright-text">Copyright (C) 2025-2026 All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const SECRET_KEY = "titibu506";
+
+        function checkAuth() {
+            const input = document.getElementById('passInput').value;
+            if (input === SECRET_KEY) {
+                startRevealGimmick();
+            } else {
+                alert('Invalid passcode.');
+                document.getElementById('passInput').value = '';
+            }
+        }
+
+        function startRevealGimmick() {
+            const authBox = document.getElementById('auth-box');
+            const sTop = document.getElementById('shutter-top');
+            const sBottom = document.getElementById('shutter-bottom');
+            const content = document.getElementById('content');
+            const overlay = document.getElementById('auth-overlay');
+
+            // 1. 入力ボックスをフェードアウト
+            authBox.style.opacity = '0';
+
+            setTimeout(() => {
+                // 2. シャッターを表示して準備
+                sTop.style.display = 'block';
+                sBottom.style.display = 'block';
+                overlay.style.display = 'none';
+
+                // 3. コンテンツを背後に配置（まだ透明）
+                content.style.display = 'flex';
+
+                // 4. シャッターが開くアニメーション
+                setTimeout(() => {
+                    sTop.style.transform = 'translateY(-100%)';
+                    sBottom.style.transform = 'translateY(100%)';
+                    
+                    // 5. 中身がじわっと浮き上がる
+                    content.classList.add('reveal');
+                }, 100);
+            }, 500);
+        }
+
+        document.getElementById('passInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkAuth();
+        });
+    </script>
+</body>
+</html>

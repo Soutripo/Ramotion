@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --line-color: #1a1a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header { width: 100%; padding: 60px 0; text-align: center; }
+        .site-title { font-family: 'Montserrat'; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #fff; text-decoration: none; }
+
+        main { flex: 1; width: 90%; max-width: 700px; margin: 0 auto; padding-bottom: 100px; }
+        .page-title { font-family: 'Montserrat'; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.25em; border-left: 2px solid #fff; padding-left: 20px; margin-bottom: 60px; }
+
+        .history-list { position: relative; padding-left: 30px; }
+        .history-list::before { content: ''; position: absolute; left: 0; top: 0; width: 1px; height: 100%; background: var(--line-color); }
+
+        .history-item { position: relative; margin-bottom: 60px; }
+        .history-item::before { content: ''; position: absolute; left: -34px; top: 0; width: 9px; height: 9px; background: #fff; border-radius: 50%; }
+
+        .date { font-family: 'Montserrat'; font-size: 0.8rem; color: var(--text-secondary); letter-spacing: 0.15em; margin-bottom: 10px; display: block; }
+        .event-title { font-size: 1.05rem; letter-spacing: 0.1em; line-height: 1.8; }
+        .event-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.6; }
+
+        .bottom-nav { text-align: center; margin-top: 40px; }
+        .back-link { display: inline-block; font-family: 'Montserrat'; font-size: 0.75rem; color: #fff; text-decoration: none; letter-spacing: 0.2em; border-bottom: 1px solid #333; padding-bottom: 5px; transition: 0.3s; }
+        .back-link:hover { border-color: #fff; }
+
+        footer { width: 100%; padding: 40px 0; background-color: #000; text-align: center; margin-top: auto; }
+        .copyright { font-family: 'Montserrat'; font-size: 0.7rem; color: #888; letter-spacing: 0.15em; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index2.html" class="site-title">RAMOTION</a>
+    </header>
+
+    <main>
+        <h2 class="page-title">UPDATE HISTORY</h2>
+
+        <div class="history-list">
+            <div class="history-item">
+                <span class="date">2026.02.15</span>
+                <div class="event-title">Official Site Open</div>
+                <p class="event-desc">鉄道写真ポートフォリオ「RAMOTION」を開設しました。</p>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="index2.html" class="back-link">BACK TO HOME</a>
+        </nav>
+    </main>
+
+    <footer>
+        <p class="copyright">Copyright (C) 2025-2026 All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>

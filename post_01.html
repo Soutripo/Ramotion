@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLもおか 茂木入換 | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --line-color: #1a1a1a;
+            --accent-glow: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- ローディング & シャッターギミック --- */
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .loader-logo {
+            font-family: 'Montserrat'; font-size: 2.5rem; font-weight: 700;
+            letter-spacing: 0.4em; color: #fff; margin-bottom: 30px;
+            opacity: 0; animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .load-pct { 
+            font-family: 'Montserrat'; font-size: 2rem; font-weight: 700; 
+            letter-spacing: 0.1em; color: #fff; margin-bottom: 10px; 
+        }
+        .load-pct::after { content: '%'; font-size: 0.8rem; margin-left: 4px; }
+        
+        .load-bar-bg { width: 240px; height: 1px; background: #222; position: relative; }
+        .load-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: #fff; width: 0%; transition: width 0.1s; }
+
+        .shutter {
+            position: fixed; left: 0; width: 100%; height: 50%;
+            background: var(--bg-dark); z-index: 10001;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            pointer-events: none; visibility: hidden;
+        }
+        #shutter-top { top: 0; border-bottom: 1px solid var(--accent-glow); }
+        #shutter-bottom { bottom: 0; border-top: 1px solid var(--accent-glow); }
+
+        /* --- メインコンテンツ --- */
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        #content {
+            opacity: 0; transform: scale(1.02);
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.6, 0.2, 1);
+            width: 100%;
+            display: none; /* 初期は非表示 */
+            flex-direction: column;
+            align-items: center;
+        }
+        #content.reveal { opacity: 1; transform: scale(1); display: flex; }
+
+        /* 戻るボタン */
+        .back-nav { position: fixed; top: 40px; left: 40px; z-index: 100; }
+        .back-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .back-nav a:hover { color: #fff; }
+
+        .article-container {
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 60px;
+            margin-bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .photo-viewer {
+            width: 100%;
+            padding: 0;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .main-photo { 
+            width: 100%; 
+            height: auto;
+            max-height: 90vh;
+            object-fit: contain;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8); 
+        }
+
+        .photo-details { 
+            margin: 2rem 0; 
+        }
+        .details-title { font-size: 1.8rem; font-weight: 700; letter-spacing: 0.2em; margin-bottom: 0.5rem; }
+        .details-meta {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.15em;
+        }
+
+        .essay-content {
+            font-size: 1.05rem;
+            line-height: 2.4;
+            color: #ffffff;
+            letter-spacing: 0.06em;
+            max-width: 750px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .essay-content p {
+            margin-bottom: 2.5rem;
+        }
+
+        .post-footer-nav {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 750px;
+            margin: 6rem auto 0;
+            padding: 2rem 0;
+            border-top: 1px solid #222;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .back-nav { position: absolute; top: 20px; left: 20px; }
+            .essay-content { font-size: 1rem; line-height: 2.2; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="loader-logo">RAMOTION</div>
+        <div class="load-pct" id="load-pct">0</div>
+        <div class="load-bar-bg"><div class="load-bar-fill" id="load-bar-fill"></div></div>
+    </div>
+
+    <div id="shutter-top" class="shutter"></div>
+    <div id="shutter-bottom" class="shutter"></div>
+
+    <div id="content">
+        <nav class="back-nav"><a href="one shot.html">← Back to List</a></nav>
+
+        <div class="article-container">
+            <main class="photo-viewer">
+                <img src="MookaDE10.jpg" alt="SLもおか 茂木入換" class="main-photo">
+                
+                <section class="photo-details">
+                    <h2 class="details-title">SLもおか 茂木入換</h2>
+                    <p class="details-meta">2025.11.02 / Moka Railway / Motegi Station</p>
+                </section>
+            </main>
+
+            <article class="essay-content">
+                <p>秋も深まり、肌寒さが少しずつ増してきた11月初旬の関東。<br>
+                久しぶりの休日、私は気分転換の行き先を探していた。</p>
+
+                <p>前夜、Twitterのタイムラインを眺めていると、真岡鐵道の看板列車「SLもおか」の補機にDE10が充当されているという情報が目に留まった。かつてはJR東日本のDE10を追い回していた私だが、最近はすっかりご無沙汰だった。</p>
+
+                <p>SLにいたっては、数年前に大井川で乗って以来だ。<br>
+                「DLやSLが牽く客車に久しぶりに乗りたい！」<br>
+                そう思い立ち、私は真岡へと向かうことを決めた。</p>
+
+                <p>翌朝、まだ暗い4時過ぎに起床。身体が覚えてしまった始発列車に乗り込む。<br>
+                外気温は一桁。車内の暖房が冷えた身体をやさしく包み込む。上野から東北線、水戸線を経由して下館を目指す道中、驚くほど深く眠り込んでしまった。無事に現着できたのは、もはや幸運というほかない。</p>
+
+                <p>下館でフリーパスを購入し、まずは真岡駅へ。入換作業や点検を見学したのち、下館への送り込み回送をカメラに収めることができた。撮影を終え、私も下館へと戻り、いよいよ「SLもおか」の客車へと足を踏み入れる。</p>
+
+                <p>高らかな警笛とともに、客車特有の衝撃が身体を突き抜けた。<br>
+                ほぼ満席の車内。深まりゆく秋の景色を車窓に映しながら、列車は終着・茂木を目指す。<br>
+                最後尾のDE10には二人の機関士が乗務していたが、SLは彼らの手助けを借りるまでもなく、力強く快走を続けた。</p>
+
+                <p>益子を過ぎるころには、車内は一人一ボックスを使えるほどのゆとりが生まれていた。はしゃぎ回る子供、酒を楽しむおじさま、そしてぼーっと車窓を眺める私。そんな混沌とした時間さえも、旅の醍醐味だと思えた。</p>
+
+                <p>茂木に到着後、街歩きと食事に夢中になるあまり、発車前の入換作業があることを失念していた。慌てて戻ると、作業は想像以上にシビアで手際よく進んでいく。そのスピードに追いつき、記録を残すだけで精一杯だった。</p>
+
+                <p>しかし、その慌ただしさの中で、この日一番の瞬間が訪れた。</p>
+
+                <p>大きく振られる手旗。<br>
+                ゆっくりと、力強く動き出す DE10。</p>
+
+                <p>それは、人の営みと鉄の鼓動が重なった。</p>
+            </article>
+
+            <nav class="post-footer-nav">
+                <span class="nav-link" style="opacity: 0.3;">PREV</span>
+                <a href="post_02.html" class="nav-link">NEXT</a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        let pct = 0;
+        const pctEl = document.getElementById('load-pct');
+        const barEl = document.getElementById('load-bar-fill');
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const sTop = document.getElementById('shutter-top');
+        const sBottom = document.getElementById('shutter-bottom');
+        const content = document.getElementById('content');
+
+        const interval = setInterval(() => {
+            pct += Math.floor(Math.random() * 8) + 1;
+            if (pct >= 100) {
+                pct = 100;
+                clearInterval(interval);
+                runShutterGimmick();
+            }
+            pctEl.textContent = pct;
+            barEl.style.width = pct + '%';
+        }, 60);
+
+        function runShutterGimmick() {
+            sTop.style.visibility = 'visible';
+            sBottom.style.visibility = 'visible';
+            
+            loaderOverlay.style.display = 'none';
+            content.style.display = 'flex';
+
+            setTimeout(() => {
+                sTop.style.transform = 'translateY(-100%)';
+                sBottom.style.transform = 'translateY(100%)';
+                content.classList.add('reveal');
+            }, 50);
+        }
+    </script>
+</body>
+</html>

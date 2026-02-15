@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --line-color: #1a1a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ヘッダー --- */
+        .site-header { width: 100%; padding: 60px 0; text-align: center; }
+        .site-title { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
+
+        /* --- コンテンツ --- */
+        main { flex: 1; width: 90%; max-width: 800px; margin: 0 auto; padding-bottom: 60px; }
+        
+        .page-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.25em; border-left: 2px solid #fff; padding-left: 20px; margin-bottom: 60px; }
+
+        .link-policy { margin-bottom: 80px; line-height: 2; }
+        .policy-title { font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 0.1em; }
+        .policy-text { color: var(--text-secondary); font-size: 0.95rem; letter-spacing: 0.05em; margin-bottom: 30px; }
+
+        /* サイト情報ボックス */
+        .info-box { background-color: #0f0f0f; border: 1px solid var(--line-color); padding: 30px; border-radius: 4px; }
+        .info-item { margin-bottom: 25px; }
+        .info-item:last-child { margin-bottom: 0; }
+        .info-label { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #555; letter-spacing: 0.1em; margin-bottom: 8px; display: block; }
+        .info-value { font-size: 0.95rem; color: #ccc; }
+
+        /* リンク集リスト */
+        .link-list { margin-top: 100px; border-top: 1px solid var(--line-color); padding-top: 60px; }
+        .link-list h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; letter-spacing: 0.2em; margin-bottom: 40px; text-align: left; color: var(--text-primary); }
+
+        .link-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 80px; }
+        .link-card { 
+            text-decoration: none; 
+            display: block; 
+            padding: 25px; 
+            background: #0f0f0f; 
+            border: 1px solid #1a1a1a;
+            transition: all 0.3s ease;
+        }
+        .link-card:hover { border-color: #fff; background: #151515; }
+        .link-card-name { font-size: 1.1rem; color: #fff; margin-bottom: 10px; display: block; }
+        .link-card-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* バックホームボタンの配置設定 */
+        .bottom-nav { text-align: center; margin-top: 40px; }
+        .back-link { 
+            display: inline-block; 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 0.75rem; 
+            color: #fff; 
+            text-decoration: none; 
+            letter-spacing: 0.2em; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 5px;
+            transition: 0.3s; 
+        }
+        .back-link:hover { border-color: #fff; }
+
+        /* --- フッター --- */
+        .final-copyright-bar { width: 100%; padding: 40px 0; background-color: #000; text-align: center; margin-top: 100px; }
+        .copyright-text { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #888; letter-spacing: 0.15em; }
+
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <a href="index2.html" class="site-title">RAMOTION</a>
+    </header>
+
+    <main>
+        <h2 class="page-title">LINK</h2>
+
+        <section class="link-policy">
+            <h3 class="policy-title">About Link</h3>
+            <p class="policy-text">
+                当サイト「RAMOTION」はリンクフリーです。事前の連絡や許可は必要ありません。<br>
+                なお、各記事への直接リンクも自由ですが、画像の直リンクはご遠慮ください。<br>
+                相互リンクのご依頼は、X (Twitter) または Instagram の DM にてお待ちしております。
+            </p>
+
+            <div class="info-box">
+                <div class="info-item">
+                    <span class="info-label">SITE NAME</span>
+                    <div class="info-value">RAMOTION</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">SITE OWNER</span>
+                    <div class="info-value">想 / Sou</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">URL</span>
+                    <div class="info-value">（あなたのURLをここに記載）</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="link-list">
+            <h3>FRIENDLY LINKS</h3>
+            <div class="link-grid">
+                
+                <a href="https://example.com" target="_blank" class="link-card">
+                    <span class="link-card-name">Sample Link</span>
+                    <p class="link-card-desc">ここにサイトの紹介文が入ります。</p>
+                </a>
+
+            </div>
+        </section>
+
+        <nav class="bottom-nav">
+            <a href="index2.html" class="back-link">BACK TO HOME</a>
+        </nav>
+    </main>
+
+    <footer class="final-copyright-bar">
+        <p class="copyright-text">Copyright (C) 2025-2026 All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
