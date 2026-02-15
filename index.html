@@ -59,6 +59,7 @@
         .site-title { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--text-primary); margin-bottom: 50px; display: block; text-decoration: none; }
         .header-statement { margin-bottom: 60px; padding: 0 5%; }
         .statement-line { display: block; font-size: 1.05rem; letter-spacing: 0.35em; line-height: 2.8; color: var(--text-primary); }
+        .sp-only { display: none; } /* PC版では改行を非表示 */
 
         .category-nav { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 60px; border-bottom: 1px solid var(--line-color); }
         .nav-item { text-decoration: none; color: var(--text-secondary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; padding: 20px 30px; cursor: pointer; background: none; border: none; position: relative; transition: color 0.3s; white-space: nowrap; }
@@ -105,7 +106,7 @@
                 display: block;
                 margin-bottom: 0.5em;
             }
-            .statement-line:empty { margin-bottom: 1em; }
+            .sp-only { display: inline; } /* スマホ版では改行を表示 */
             
             .category-nav { 
                 gap: 0; 
@@ -159,10 +160,8 @@
             <span class="statement-line">鉄路には、想いがある。</span>
             <span class="statement-line">鉄路には、日常がある。</span>
             <br>
-            <span class="statement-line">そんな景色を忘れたくないから、</span>
-            <span class="statement-line">今日も写真を撮る。</span>
-            <span class="statement-line">人の営みと触れ合った瞬間に見せる、</span>
-            <span class="statement-line">一瞬の表情を求めて。</span>
+            <span class="statement-line">そんな景色を忘れたくないから、<br class="sp-only">今日も写真を撮る。</span>
+            <span class="statement-line">人の営みと触れ合った瞬間に見せる、<br class="sp-only">一瞬の表情を求めて。</span>
         </div>
 
         <nav class="category-nav">
