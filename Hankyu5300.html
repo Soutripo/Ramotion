@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>至高のマルーン | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #4d0f28;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- ローディング & シャッター（共通モーション） --- */
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #8B2942 0%, #6B1F35 25%, #4B152A 50%, #2B0D1F 75%, #0a0a0a 100%);
+            z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .loader-logo { font-family: 'Montserrat'; font-size: 4.5rem; font-weight: 700; letter-spacing: 0.4em; color: #fff; margin-bottom: 30px; }
+        .load-pct { font-family: 'Montserrat'; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .load-pct::after { content: '%'; font-size: 0.8rem; margin-left: 4px; }
+        .load-bar-bg { width: 100vw; height: 1px; background: #222; position: relative; }
+        .load-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: #fff; width: 0%; transition: width 0.1s; }
+
+        .shutter {
+            position: fixed; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, #8B2942 0%, #6B1F35 25%, #4B152A 50%, #2B0D1F 75%, #0a0a0a 100%);
+            z-index: 10001;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            pointer-events: none; visibility: hidden;
+        }
+        #shutter-top { top: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+        #shutter-bottom { bottom: 0; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+
+        /* --- メインレイアウト --- */
+        body { 
+            font-family: 'Noto Serif JP', serif; 
+            background: linear-gradient(to bottom, #8B2942 0%, #6B1F35 25%, #4B152A 50%, #2B0D1F 75%, #0a0a0a 100%);
+            background-attachment: fixed;
+            color: var(--text-primary); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow-x: hidden; 
+        }
+        #content { opacity: 0; transform: scale(1.02); transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.6, 0.2, 1); width: 100%; display: none; flex-direction: column; align-items: center; }
+        #content.reveal { opacity: 1; transform: scale(1); display: flex; }
+
+        .exhibition-list-nav { position: fixed; top: 40px; left: 40px; z-index: 100; }
+        .exhibition-list-nav a { color: var(--text-secondary); text-decoration: none; font-family: 'Montserrat'; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; transition: color 0.3s; }
+        .exhibition-list-nav a:hover { color: #fff; }
+
+        .article-container { width: 90%; max-width: 1200px; margin: 120px 0; }
+
+        /* --- 文章セクション --- */
+        .essay-section { font-size: 1.05rem; line-height: 2.4; color: #ffffff; letter-spacing: 0.06em; max-width: 800px; margin: 0 auto 80px; text-align: justify; text-justify: inter-ideograph; word-break: normal; }
+        .essay-section p { margin-bottom: 2.5rem; }
+        .section-text { max-width: 800px; margin: 0 auto 100px; line-height: 2; color: var(--text-secondary); font-size: 0.95rem; text-align: center; word-break: normal; }
+        .section-text p { text-align: center; }
+
+        /* --- 写真グリッド：PC 2列 / スマホ 1列 --- */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .single-photo { width: 100%; margin-bottom: 30px; text-align: center; }
+        
+        .photo-item img, .single-photo img { 
+            width: 100%; 
+            height: auto; 
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .photo-grid { grid-template-columns: 1fr; gap: 30px; }
+            .loader-logo { font-size: 2.5rem; letter-spacing: 0.2em; }
+            .exhibition-list-nav { position: absolute; top: 20px; left: 20px; }
+            .exhibition-list-nav a { font-size: 0.7rem; }
+            .essay-section { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="loader-logo">RAMOTION</div>
+        <div class="load-pct" id="load-pct">0</div>
+        <div class="load-bar-bg"><div class="load-bar-fill" id="load-bar-fill"></div></div>
+    </div>
+
+    <div id="shutter-top" class="shutter"></div>
+    <div id="shutter-bottom" class="shutter"></div>
+
+    <div id="content">
+        <nav class="exhibition-list-nav"><a href="exhibition.html">← Exhibition List</a></nav>
+
+        <div class="article-container">
+            <article class="essay-section">
+                <p>2026年1月1日。元日の朝、少し雲がかかった富士山を横目に新幹線で京都へ向かった。<br>
+                U25の割引で通常より5,000円ほど安く済んだ浮いた分は、帰りの道中に充てることにした。</p>
+
+                <p>昼過ぎまで家族と京都を観光した後、昼過ぎからは別行動の許可をもらい、一人で梅田へ。<br>
+                話題の座席指定車両「PRiVACE（プライベース）」を使い、移動のなかで撮影の準備を整える。</p>
+
+                <p>快適な車内を楽しんでいた私だったが、途中ですれ違った5300系に一目惚れしてしまい、気づけば運用を調べはじめていた。<br>
+                ガッツリ撮る気はなかったが、ここでスイッチが入ってしまった。</p>
+
+                <p>約半日、マルーンの車体を追い続ける。<br>
+                拙い写真や文章であるが、御笑覧いただければ幸いである。</p>
+            </article>
+
+            <section class="photo-grid">
+                <div class="photo-item"><img src="5300-1.jpg" alt="5300-1"></div>
+                <div class="photo-item"><img src="5300-2.jpg" alt="5300-2"></div>
+            </section>
+            <div class="section-text"><p>まずは上新庄や十三の付近で。スカートなし、幕車、前パンなど。なかなか癖になる要素ばかりだ。</p></div>
+
+            <section class="photo-grid">
+                <div class="photo-item"><img src="5300-3.jpg" alt="5300-3"></div>
+                <div class="photo-item"><img src="5300-4.jpg" alt="5300-4"></div>
+            </section>
+            <div class="section-text">
+                <p>日が出てきた。少し雑多な雰囲気を走り抜けていく姿に惚れ惚れしていた。<br>
+                阪急のマルーン色は曇りと晴れでは全く異なる印象を見せてくれる。</p>
+            </div>
+
+            <div class="single-photo"><img src="5300-5.jpg" alt="5300-5"></div>
+            <div class="section-text">
+                <p>やっぱり撮っておきたい乗務員交代。<br>
+                見ず知らずの土地で交代駅を特定するのはなかなか難しかった。</p>
+            </div>
+
+            <div class="single-photo"><img src="5300-6.jpg" alt="5300-6"></div>
+            <div class="section-text"><p>少し出ている日を浴びながら快走してくる準急。なかなかいい音を住宅地に響かせていた。</p></div>
+
+            <section class="photo-grid">
+                <div class="photo-item"><img src="5300-7.jpg" alt="5300-7"></div>
+                <div class="photo-item"><img src="5300-8.jpg" alt="5300-8"></div>
+            </section>
+            <div class="section-text">
+                <p>高架化が進む淡路界隈。<br>
+                真新しい高架の横を走る姿は、京急蒲田高架化を思い出させる...。</p>
+            </div>
+
+            <section class="photo-grid">
+                <div class="photo-item"><img src="5300-9.jpg" alt="5300-9"></div>
+                <div class="photo-item"><img src="5300-14.jpg" alt="5300-14"></div>
+            </section>
+            <div class="section-text">
+                <p>すっかり暗くなってしまった。<br>
+                撮ってばかりじゃあつまんない。ということで一度、5300系に乗車しながらどこで撮るか考えてみることにした。</p>
+            </div>
+
+            <section class="photo-grid">
+                <div class="photo-item"><img src="5300-10.jpg" alt="5300-10"></div>
+                <div class="photo-item"><img src="5300-11.jpg" alt="5300-11"></div>
+            </section>
+            <div class="section-text">
+                <p>19時を超えると何本かが車庫に入庫するということで、入換などが狙えるのではないか？と踏み、桂と正雀へ向かった。<br>
+                慣れない場所での入換の撮影は至難の業。どこで折り返すか、どこに入るのか全く分からない状態で確かに照らされる前照灯を頼りに撮影をした。</p>
+            </div>
+
+            <section class="photo-grid">
+                <div class="photo-item"><img src="5300-13.jpg" alt="5300-13"></div>
+                <div class="photo-item"><img src="5300-12.jpg" alt="5300-12"></div>
+            </section>
+            <div class="section-text">
+                <p>あまり遅くなると家族から大バッシングを食らってしまうので、ある程度の時間で切り上げることにした。<br>
+                約半日という短い時間ではあったが、ここまで撮影できるとは思わず、棚ぼたであった。<br>
+                また、京都大阪に行く機会があればしっかり撮影地や情報を調べたうえで撮影できたらいいなと願っている。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pct = 0;
+        const pctEl = document.getElementById('load-pct');
+        const barEl = document.getElementById('load-bar-fill');
+        const overlay = document.getElementById('loader-overlay');
+        const sTop = document.getElementById('shutter-top');
+        const sBottom = document.getElementById('shutter-bottom');
+        const content = document.getElementById('content');
+
+        const interval = setInterval(() => {
+            pct += Math.floor(Math.random() * 10) + 1;
+            if (pct >= 100) {
+                pct = 100;
+                clearInterval(interval);
+                runShutter();
+            }
+            pctEl.textContent = pct;
+            barEl.style.width = pct + '%';
+        }, 60);
+
+        function runShutter() {
+            sTop.style.visibility = 'visible';
+            sBottom.style.visibility = 'visible';
+            overlay.style.display = 'none';
+            content.style.display = 'flex';
+            setTimeout(() => {
+                sTop.style.transform = 'translateY(-100%)';
+                sBottom.style.transform = 'translateY(100%)';
+                content.classList.add('reveal');
+            }, 50);
+        }
+
+        // スクロールに応じて背景色を変化
+        window.addEventListener('scroll', () => {
+            const scrollPercentage = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            const body = document.body;
+            
+            // 25%未満は明るいマルーンで固定
+            if (scrollPercentage < 0.25) {
+                body.style.background = `linear-gradient(to bottom, 
+                    rgb(139, 41, 66) 0%, 
+                    rgb(107, 31, 53) 50%, 
+                    rgb(75, 21, 42) 100%)`;
+            }
+            // 25%～50%: 明るいマルーン → 中間のマルーン
+            else if (scrollPercentage < 0.5) {
+                const progress = (scrollPercentage - 0.25) / 0.25;
+                body.style.background = `linear-gradient(to bottom, 
+                    rgb(${139 - progress * 30}, ${41 - progress * 10}, ${66 - progress * 20}) 0%, 
+                    rgb(${107 - progress * 25}, ${31 - progress * 8}, ${53 - progress * 16}) 50%, 
+                    rgb(${75 - progress * 20}, ${21 - progress * 6}, ${42 - progress * 12}) 100%)`;
+            }
+            // 50%～75%: 中間のマルーン → やや暗いマルーン
+            else if (scrollPercentage < 0.75) {
+                const progress = (scrollPercentage - 0.5) / 0.25;
+                body.style.background = `linear-gradient(to bottom, 
+                    rgb(${109 - progress * 30}, ${31 - progress * 8}, ${46 - progress * 10}) 0%, 
+                    rgb(${82 - progress * 25}, ${23 - progress * 6}, ${37 - progress * 8}) 50%, 
+                    rgb(${55 - progress * 20}, ${15 - progress * 4}, ${30 - progress * 8}) 100%)`;
+            }
+            // 75%以上はやや暗いマルーンで固定
+            else {
+                body.style.background = `linear-gradient(to bottom, 
+                    rgb(79, 23, 36) 0%, 
+                    rgb(57, 17, 29) 50%, 
+                    rgb(35, 11, 22) 100%)`;
+            }
+            body.style.backgroundAttachment = 'fixed';
+        });
+    </script>
+</body>
+</html>
