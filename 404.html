@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-glow: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- ローディング & シャッターギミック --- */
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .loader-logo { font-family: 'Montserrat'; font-size: 2.5rem; font-weight: 700; letter-spacing: 0.4em; color: #fff; margin-bottom: 30px; }
+        .load-pct { font-family: 'Montserrat'; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .load-pct::after { content: '%'; font-size: 0.8rem; margin-left: 4px; }
+        .load-bar-bg { width: 240px; height: 1px; background: #222; position: relative; }
+        .load-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: #fff; width: 0%; transition: width 0.1s; }
+
+        .shutter {
+            position: fixed; left: 0; width: 100%; height: 50%;
+            background: var(--bg-dark); z-index: 10001;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            pointer-events: none; visibility: hidden;
+        }
+        #shutter-top { top: 0; border-bottom: 1px solid var(--accent-glow); }
+        #shutter-bottom { bottom: 0; border-top: 1px solid var(--accent-glow); }
+
+        /* --- メインコンテンツ --- */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #content {
+            opacity: 0; transform: scale(1.05);
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.6, 0.2, 1);
+            text-align: center;
+            display: none;
+            flex-direction: column;
+        }
+        #content.reveal { opacity: 1; transform: scale(1); display: flex; }
+
+        .error-code { font-size: 8rem; font-weight: 700; letter-spacing: 0.1em; line-height: 1; margin-bottom: 20px; }
+        .error-message { font-size: 1rem; letter-spacing: 0.3em; color: var(--text-secondary); margin-bottom: 50px; text-transform: uppercase; }
+
+        .back-home-btn {
+            display: inline-block;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            border: 1px solid #333;
+            padding: 15px 40px;
+            transition: 0.4s;
+        }
+        .back-home-btn:hover { background: #fff; color: #000; border-color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="loader-logo">RAMOTION</div>
+        <div class="load-pct" id="load-pct">0</div>
+        <div class="load-bar-bg"><div class="load-bar-fill" id="load-bar-fill"></div></div>
+    </div>
+
+    <div id="shutter-top" class="shutter"></div>
+    <div id="shutter-bottom" class="shutter"></div>
+
+    <div id="content">
+        <h1 class="error-code">404</h1>
+        <p class="error-message">Page Not Found</p>
+        <div class="nav-box">
+            <a href="index.html" class="back-home-btn">BACK TO HOME</a>
+        </div>
+    </div>
+
+    <script>
+        let pct = 0;
+        const pctEl = document.getElementById('load-pct');
+        const barEl = document.getElementById('load-bar-fill');
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const sTop = document.getElementById('shutter-top');
+        const sBottom = document.getElementById('shutter-bottom');
+        const content = document.getElementById('content');
+
+        const interval = setInterval(() => {
+            pct += Math.floor(Math.random() * 15) + 5; 
+            if (pct >= 100) {
+                pct = 100;
+                clearInterval(interval);
+                runShutterGimmick();
+            }
+            pctEl.textContent = pct;
+            barEl.style.width = pct + '%';
+        }, 40);
+
+        function runShutterGimmick() {
+            sTop.style.visibility = 'visible';
+            sBottom.style.visibility = 'visible';
+            loaderOverlay.style.display = 'none';
+            content.style.display = 'flex';
+            setTimeout(() => {
+                sTop.style.transform = 'translateY(-100%)';
+                sBottom.style.transform = 'translateY(100%)';
+                content.classList.add('reveal');
+            }, 50);
+        }
+    </script>
+</body>
+</html>

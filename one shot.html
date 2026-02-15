@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Shot | Ramotion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .back-nav { position: fixed; top: 40px; left: 40px; z-index: 100; }
+        .back-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .back-nav a:hover { color: #fff; }
+
+        .container { max-width: 800px; width: 90%; margin: 100px 0; }
+        .oneshot-header { text-align: center; margin-bottom: 80px; }
+        .oneshot-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .oneshot-list { display: flex; flex-direction: column; gap: 1rem; list-style: none; }
+        .oneshot-item {
+            display: flex;
+            align-items: baseline;
+            text-decoration: none;
+            color: inherit;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #1a1a1a;
+            transition: all 0.3s ease;
+        }
+        .oneshot-item:hover { background-color: #111; padding-left: 10px; }
+
+        .number {
+            font-family: 'Montserrat', sans-serif;
+            background: #222;
+            color: #fff;
+            font-size: 0.7rem;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+            font-weight: 700;
+        }
+
+        .title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; margin-right: auto; }
+        .meta {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            margin-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .back-nav { position: absolute; top: 20px; left: 20px; }
+            .oneshot-header h1 { font-size: 1.8rem; }
+            .oneshot-item { flex-wrap: wrap; }
+            .meta { width: 100%; margin-left: 44px; margin-top: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="back-nav"><a href="index.html">← Back</a></nav>
+    <div class="container">
+        <header class="oneshot-header"><h1>One Shot</h1></header>
+        <div class="oneshot-list">
+            <a href="post_01.html" class="oneshot-item">
+                <span class="number">1</span>
+                <span class="title">SLもおか 茂木入換</span>
+                <span class="meta">2025.11.02 / Moka Railway</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
