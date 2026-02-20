@@ -47,10 +47,10 @@
         .info-value { font-size: 0.95rem; color: #ccc; word-break: break-all; overflow-wrap: break-word; }
 
         /* リンク集リスト */
-        .link-list { margin-top: 100px; border-top: 1px solid var(--line-color); padding-top: 60px; }
+        .link-list { border-bottom: 1px solid var(--line-color); padding-bottom: 60px; margin-bottom: 80px; }
         .link-list h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; letter-spacing: 0.2em; margin-bottom: 40px; text-align: left; color: var(--text-primary); }
 
-        .link-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 80px; }
+        .link-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 0; }
         .link-card { 
             text-decoration: none; 
             display: block; 
@@ -104,6 +104,17 @@
     <main>
         <h2 class="page-title">LINK</h2>
 
+        <section class="link-list">
+            <h3>FRIENDLY LINKS</h3>
+            <div class="link-grid">
+                <a href="https://tetsubuntappuri.jp/" class="link-card" target="_blank" rel="noopener noreferrer">
+                    <span class="link-card-name">テツ分たっぷり！</span>
+                    <span class="link-card-desc">いつき氏のサイトです。SLをはじめとした各地の鉄道を、四季折々の風景と共に伝えてくれる最高のサイトです。想像を上回る写真を見ることができ、訪れるたびに驚かされています。</span>
+                    <span class="info-label" style="margin-top: 15px;">https://tetsubuntappuri.jp/</span>
+                </a>
+            </div>
+        </section>
+
         <section class="link-policy">
             <h3 class="policy-title">About Link</h3>
             <p class="policy-text">
@@ -125,13 +136,6 @@
                     <span class="info-label">URL</span>
                     <div class="info-value">https://soutripo.github.io/Ramotion/index.html</div>
                 </div>
-            </div>
-        </section>
-
-        <section class="link-list">
-            <h3>FRIENDLY LINKS</h3>
-            <div class="link-grid">
-                <!-- 相互リンク募集中です -->
             </div>
         </section>
 
