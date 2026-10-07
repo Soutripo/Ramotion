@@ -89,6 +89,22 @@
         .item-info h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.15em; }
         .item-info p { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--text-secondary); }
 
+
+        /* --- ONE SHOT カルーセル --- */
+        .carousel { max-width: 1000px; margin: 0 auto 30px; }
+        .car-viewport { overflow: hidden; touch-action: pan-y; }
+        .car-track { display: flex; transition: transform 0.8s cubic-bezier(0.2, 0.6, 0.2, 1); }
+        .car-slide { flex: 0 0 100%; display: block; text-decoration: none; color: inherit; }
+        .car-slide:hover img { transform: scale(1.03); }
+        .car-controls { display: flex; justify-content: center; align-items: center; gap: 28px; margin-top: 10px; }
+        .car-btn { background: none; border: none; color: var(--text-secondary); font-family: 'Montserrat', sans-serif; font-size: 1.4rem; cursor: pointer; padding: 8px 14px; transition: color 0.3s; }
+        .car-btn:hover { color: #fff; }
+        .car-dots { display: flex; gap: 12px; }
+        .car-dot { width: 24px; height: 2px; background: #333; border: none; padding: 0; cursor: pointer; transition: background 0.3s; }
+        .car-dot.active { background: #fff; }
+        .view-all { display: block; text-align: center; margin: 40px 0 80px; text-decoration: none; color: var(--text-secondary); font-family: 'Montserrat', sans-serif; font-size: 0.8rem; letter-spacing: 0.3em; transition: color 0.3s; }
+        .view-all:hover { color: #fff; }
+
         .coming-soon { text-align: center; padding: 120px 0; color: var(--text-secondary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; letter-spacing: 0.4em; }
 
         /* --- フッター --- */
@@ -202,29 +218,40 @@
 
         <div id="tab-oneshot" class="tab-content">
             <div class="section-header"><h2 class="section-title">ONE SHOT</h2></div>
-            <div class="preview-grid">
-                <a href="post_01.html" class="preview-item">
-                    <div class="img-box"><img src="MookaDE10.jpg" alt="SLもおか"></div>
-                    <div class="item-info">
-                        <h3>SLもおか 茂木入換</h3>
-                        <p>2025.11.02 / MOOKA RAILWAY</p>
+            <!-- 最新作を上に追加（5本程度まで）。古いものは one shot.html で閲覧 -->
+            <div class="carousel" id="oneshot-carousel">
+                <div class="car-viewport">
+                    <div class="car-track">
+                        <a href="post_03.html" class="preview-item car-slide">
+                            <div class="img-box"><img src="組み写真.jpg" alt="土佐電"></div>
+                            <div class="item-info">
+                                <h3>土佐電</h3>
+                                <p>2026.09.01 / TOSADEN KOTSU</p>
+                            </div>
+                        </a>
+                        <a href="post_02.html" class="preview-item car-slide">
+                            <div class="img-box"><img src="Oomiya_65.jpg" alt="老幼"></div>
+                            <div class="item-info">
+                                <h3>老幼</h3>
+                                <p>2025.11.22 / JR FREIGHT</p>
+                            </div>
+                        </a>
+                        <a href="post_01.html" class="preview-item car-slide">
+                            <div class="img-box"><img src="MookaDE10.jpg" alt="SLもおか"></div>
+                            <div class="item-info">
+                                <h3>SLもおか 茂木入換</h3>
+                                <p>2025.11.02 / MOOKA RAILWAY</p>
+                            </div>
+                        </a>
                     </div>
-                </a>
-                <a href="post_02.html" class="preview-item">
-                    <div class="img-box"><img src="Oomiya_65.jpg" alt="老幼"></div>
-                    <div class="item-info">
-                        <h3>老幼</h3>
-                        <p>2025.11.22 / JR FREIGHT</p>
-                    </div>
-                </a>
-                <a href="post_03.html" class="preview-item">
-                    <div class="img-box"><img src="組み写真.jpg" alt="土佐電"></div>
-                    <div class="item-info">
-                        <h3>土佐電</h3>
-                        <p>2026.09.01 / TOSADEN KOTSU</p>
-                    </div>
-                </a>
+                </div>
+                <div class="car-controls">
+                    <button class="car-btn" id="car-prev" aria-label="前へ">←</button>
+                    <div class="car-dots" id="car-dots"></div>
+                    <button class="car-btn" id="car-next" aria-label="次へ">→</button>
+                </div>
             </div>
+            <a href="one shot.html" class="view-all">VIEW ALL →</a>
         </div>
     </main>
 
@@ -273,6 +300,62 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.classList.add("active");
         }
+
+        /* --- ONE SHOT カルーセル --- */
+        (function () {
+            const root = document.getElementById('oneshot-carousel');
+            const track = root.querySelector('.car-track');
+            const slides = root.querySelectorAll('.car-slide');
+            const dotsEl = document.getElementById('car-dots');
+            const INTERVAL = 5000; // 自動送りの間隔(ms)
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let idx = 0, timer = null;
+
+            slides.forEach((_, i) => {
+                const d = document.createElement('button');
+                d.className = 'car-dot';
+                d.setAttribute('aria-label', (i + 1) + '枚目');
+                d.onclick = () => { go(i); restart(); };
+                dotsEl.appendChild(d);
+            });
+            const dots = dotsEl.children;
+
+            function go(i) {
+                idx = (i + slides.length) % slides.length;
+                track.style.transform = 'translateX(' + (-100 * idx) + '%)';
+                for (let k = 0; k < dots.length; k++) dots[k].classList.toggle('active', k === idx);
+            }
+            function stop() { clearInterval(timer); timer = null; }
+            function start() {
+                if (reduce || slides.length < 2) return;
+                stop();
+                timer = setInterval(() => { if (!document.hidden) go(idx + 1); }, INTERVAL);
+            }
+            function restart() { stop(); start(); }
+
+            document.getElementById('car-prev').onclick = () => { go(idx - 1); restart(); };
+            document.getElementById('car-next').onclick = () => { go(idx + 1); restart(); };
+
+            // ホバー・フォーカス中は停止
+            root.addEventListener('mouseenter', stop);
+            root.addEventListener('mouseleave', start);
+            root.addEventListener('focusin', stop);
+            root.addEventListener('focusout', start);
+
+            // スワイプ操作
+            let x0 = null;
+            root.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; stop(); }, { passive: true });
+            root.addEventListener('touchend', e => {
+                if (x0 !== null) {
+                    const dx = e.changedTouches[0].clientX - x0;
+                    if (Math.abs(dx) > 50) go(idx + (dx < 0 ? 1 : -1));
+                }
+                x0 = null; start();
+            });
+
+            go(0);
+            start();
+        })();
     </script>
 </body>
 </html>
